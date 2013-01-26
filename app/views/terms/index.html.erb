@@ -1,0 +1,37 @@
+<h1>Listing  <%=@terms.size%>  terms</h1>
+<h2>Showing <%=params[:term]%> terms <h2>
+<table>
+  <tr>
+    <th><%=link_to 'Main Terms', terms_path(params.merge({term:"main"}))%></th>
+    <th><%=link_to 'sub Terms', terms_path(params.merge({term:"sub"}))%></th>
+    <th><%=link_to 'All', terms_path%></th>
+  </tr>
+</table>  
+
+<table>
+  <tr>
+    <th>term</th>
+    <th>type</th>
+    <th>count</th>
+  </tr>
+<% @terms.each do |term| %>
+  <tr>
+    <td><%=term.term%></td>
+    <td>
+      <%= form_for(term) do |f| %>
+        <div class="field">
+          <%=f.text_field :category%>
+            <div class="actions">
+              <%= f.submit %>
+            </div>
+        </div>
+        
+      <% end %>
+    <td>
+    
+    <td><%=term.count%><td>
+  </tr>
+<% end %>
+</table>
+
+<br />
