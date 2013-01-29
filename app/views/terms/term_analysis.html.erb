@@ -1,0 +1,36 @@
+<div class="container">
+  <div class="row-fluid pagination-centered">
+    <div class="span12 ">
+      <h1>term analysis <h1>
+      	<%=form_tag  term_analysis_terms_path,:class=>"form-search",remote:true ,method:'get' do%>
+         <%= text_field_tag :search,nil,:class=>"input-large search-query",placeholder:"search for terms" %>
+        <button type="submit" class="btn",value="submit">Search</button>
+       <%end%>
+    </div>
+  </div>
+</div>
+<%=binding.pry%>
+<div class="container">
+  <div class="row-fluid pagination-centered">	
+    <div class="span12 ">
+      <%if @related_terms%>
+      <table class="table-hover">
+        <thead>
+          <th><h3>term</h3></th>
+            <th><h3>count</h3></th>
+            <th><h3>strengh</h3></th>
+        </thead>
+        <tbody>
+          <tr>	
+            <%@related_terms.each do |t|%>
+              <td><strong><%=t[:term]%></strong></td>	
+              <td><%=t[:count]%></td>
+              <td><%=t[:strengh]%></td>
+              <%end%>
+    	  </tr>
+    	</tbody>
+      </table>
+      <%end%>
+    </div>
+  </div> 
+</div>     	  

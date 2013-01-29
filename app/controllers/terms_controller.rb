@@ -1,14 +1,24 @@
 class TermsController < ApplicationController
   # GET /terms
   # GET /terms.json
+  
+  def term_analysis
+    binding.pry
+    @related_terms = Term.similarity(params[:search]) if params[:search] 
+  end  
+  
+  def search_results
+    redirect_to search_results_terms_path  
+  end  
+  
   def index
-    if !params.has_key? :term
-      @terms = Term.order("count desc")
-    elsif params.has_value? "main"
-      @terms = Term.main.order("count desc")
+    if params[:term]
+      @terms = Term.type(params[:term]).order("count desc")
     else
-      @terms = Term.sub.order("count desc")
-    end
+      @terms = Term.main.order("count desc")
+    end    
+    @categories =Term.select(:category).map(&:_category).uniq
+    
 
     respond_to do |format|
       format.html # index.html.erb

@@ -7,6 +7,7 @@ gem 'rails', '3.2.8'
 
 gem 'pg'
 gem 'pry-debugger'
+gem "mediawiki-gateway", "~> 0.5.1"
 #gem "echonest", "~> 0.3.0"
 #gem "echonest_resource"
 gem 'youtube_it'

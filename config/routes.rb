@@ -1,6 +1,11 @@
 Final::Application.routes.draw do
   resources :songs
-  resources :terms
+  resources :terms do
+    collection do
+      get 'term_analysis'
+      get 'search_results'
+    end
+  end    
   # The priority is based upon order of creation:
   # first created -> highest priority.
 

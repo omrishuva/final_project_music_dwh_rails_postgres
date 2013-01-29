@@ -6,9 +6,9 @@ class AddAggregateColumnsToTerm < ActiveRecord::Migration
   end
 
   def down
-  	remove_column :terms, :count, :integer
-  	remove_column :terms, :freq_avg, :float
-  	remove_column :terms, :weight_avg, :float
+  	# remove_column :terms, :count
+  	# remove_column :terms, :freq_avg
+  	# remove_column :terms, :weight_avg
   end
 
 end

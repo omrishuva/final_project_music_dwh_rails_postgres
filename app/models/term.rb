@@ -1,24 +1,22 @@
 class Term < ActiveRecord::Base
    attr_accessible :term  ,:category  
+   
    has_many :artist_terms
    has_many :artists ,:through=>:artist_terms 
-   #scope :type, lambda{|type| where(term:user_term).first.map(&_:id)}
-   scope :main , where("count>(SELECT AVG(count) FROM terms)")
-   scope :sub , where("count<(SELECT AVG(count) FROM terms)")
+   
+   scope :type ,  lambda{|type| where(category:type)}
+   scope :main ,  where("count>(SELECT AVG(count) FROM terms)")
+   scope :sub  ,  where("count<(SELECT AVG(count) FROM terms)")
+   
+
+
    def songs(attr_type)
      artist_ids = artists.map(&:artist_id)
      songs = Song.where(artist_id:artist_ids).select(Song.attr_return(attr_type))
    end
    
-   def self.type(type)
-    case type
-      when :main then Term.where("count>(SELECT AVG(count) FROM terms)") 
-      when :sub  then Term.where("count<(SELECT AVG(count) FROM terms)")  
-    end          
-   end 
-
    def self.artist_ids_by_term(user_term)
-   		self.where(term:user_term).first.artists.map(&:_artist_id).uniq
+     self.where(term:user_term).first.artists.map(&:_artist_id).uniq
    end   
    
    def self.similarity(user_term)
@@ -31,12 +29,11 @@ class Term < ActiveRecord::Base
      uniq_terms.each do |term|
        name = term.term
        terms_count =  terms_ids.count(term.id)
-       total_count +=terms_count 
+       total_count += terms_count 
        strengh = (terms_count.to_f/term[:count])  
        related_terms.push({term:name,count:terms_count,strengh:strengh})
      end 
      count_avg  = (total_count/related_terms.size)
-     binding.pry
      related_terms.reject! {|t| t[:term] == user_term }
      related_terms.reject! {|t| t[:count] < count_avg }
      related_terms.sort_by {|k| k[:strengh]}.reverse![1..related_terms.size]

@@ -1,37 +1,46 @@
-<h1>Listing  <%=@terms.size%>  terms</h1>
-<h2>Showing <%=params[:term]%> terms <h2>
-<table>
-  <tr>
-    <th><%=link_to 'Main Terms', terms_path(params.merge({term:"main"}))%></th>
-    <th><%=link_to 'sub Terms', terms_path(params.merge({term:"sub"}))%></th>
-    <th><%=link_to 'All', terms_path%></th>
-  </tr>
-</table>  
-
-<table>
-  <tr>
-    <th>term</th>
-    <th>type</th>
-    <th>count</th>
-  </tr>
-<% @terms.each do |term| %>
-  <tr>
-    <td><%=term.term%></td>
-    <td>
-      <%= form_for(term) do |f| %>
-        <div class="field">
-          <%=f.text_field :category%>
-            <div class="actions">
-              <%= f.submit %>
-            </div>
-        </div>
-        
-      <% end %>
-    <td>
-    
-    <td><%=term.count%><td>
-  </tr>
-<% end %>
-</table>
+<h1><%=headline_fromat(@terms.count,params[:term])%></h1>
+  <div class="container-fluid">
+    <div class="row-fluid">
+      <div class="span3">  
+        <h2>term categories</h2>
+        <%@categories.each do |category|%>
+              <ul class="unstyled">
+                <li>
+                    <strong>
+                      <%=link_to category , terms_path(params.merge({term:category}))%>
+                    </strong>
+                </li>
+              </ul>
+          
+            
+          </strong>
+        <% end %>  
+     </div>  
+    <div class="span9">  
+      <table class="table-hover">
+        <thead>
+          <th><h3>term</h3></th>
+            <th><h3>type</h3></th>
+            <th><h3>count</h3></th>
+        </thead>
+        <tbody>
+        <tr>
+        <% @terms.each do |term| %>
+          <td><strong><%=term.term%></strong></td>
+          <td>
+            <%= form_for(term) do |f| %>
+              <div class="row">
+                <div class="field">
+                  <%=f.text_field :category%>
+                </div>
+              </div>
+              <button class="btn-primary btn btn-mini" type="submit">change category</button>
+            <% end %>
+          </td>
+          <td><%=term.count%></td>
+        </tr>
+      </tbody>
+        <% end %>
+      </table>
 
 <br />
