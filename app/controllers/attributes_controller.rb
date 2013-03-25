@@ -58,6 +58,10 @@ class AttributesController < ApplicationController
     end
   end
 
+  def add_category
+  	binding.pry
+  	#attributes = Attribute.where(id:1 )
+  end	
   # PUT /songs/1
   # PUT /songs/1.json
   def update
@@ -73,6 +77,9 @@ class AttributesController < ApplicationController
       end
     end
   end
+
+
+
 
   # DELETE /songs/1
   # DELETE /songs/1.json

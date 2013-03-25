@@ -20,23 +20,28 @@
 </div>
 
 <%if @attributes%>
-  <table>
-    <tr>
-      <th>Attribute name</th>
-      <th></th>
-      <th></th>
-    </tr>
-    
-    <% @attributes.each do |attribute| %>
-      <tr>
-        <td><%=attribute.attribute_name%></td>
-        <td><%= link_to 'Show', attribute %></td>
-        <td><%= link_to 'Edit', edit_attribute_path(attribute) %></td>
-        <td><%= link_to 'Destroy', attribute, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-      </tr>
-    <% end %>  
-  </table>
- <%end%>
 
+  <%=form_tag(add_category_attributes_path, method: "put", class: "form-actions") do %>
+    <table>
+      <tr>
+        <th>Select</th>
+        <th></th>
+        <th></th>
+        <th>Attributes</th>
+      </tr>
+      
+      <% @attributes.each do |attribute| %>
+        <tr>
+          <td><%= check_box_tag "selected[#{attribute.id}]"%></td>
+          <td><td>
+          <td><%=label_tag attribute.attribute_name%></td>
+        </tr>
+      <% end %>  
+    </table>
+    <div><%= submit_tag 'Save' %></div>
+  <%end%>
+  
+  
+  <%end%> 
 <br />
           

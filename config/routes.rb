@@ -3,7 +3,11 @@ Final::Application.routes.draw do
   
   root to: "static_pages#home"  
   
-  resources :attributes
+  resources :attributes do
+    collection do
+      put 'add_category'
+    end
+  end    
 
   
   resources :queries do
