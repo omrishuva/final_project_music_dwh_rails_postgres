@@ -1,6 +1,16 @@
 class SongsController < ApplicationController
   # GET /songs
   # GET /songs.json
+  def analysis
+    Song.analysis(params[:search].strip) if params[:search] 
+
+    respond_to do |format|
+      format.html
+      format.js {render :analysis,layout: false}
+    end
+  end  
+
+
   def index
     @songs = Song.all
 

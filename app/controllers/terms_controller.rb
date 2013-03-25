@@ -3,12 +3,14 @@ class TermsController < ApplicationController
   # GET /terms.json
   
   def term_analysis
-    binding.pry
-    @related_terms = Term.similarity(params[:search]) if params[:search] 
-  end  
-  
-  def search_results
-    redirect_to search_results_terms_path  
+    if params[:search]
+      @term = Term.find_by_term(params[:search].strip) 
+      @related_terms = @term.similarity  
+    end
+    respond_to do |format|
+      format.html
+      format.js {render :term_analysis,layout: false}
+    end  
   end  
   
   def index
@@ -17,7 +19,7 @@ class TermsController < ApplicationController
     else
       @terms = Term.main.order("count desc")
     end    
-    @categories =Term.select(:category).map(&:_category).uniq
+    @categories =Term.select(:category).map(&:category).uniq
     
 
     respond_to do |format|
@@ -73,7 +75,7 @@ class TermsController < ApplicationController
   # PUT /terms/1.json
   def update
     @term = Term.find(params[:id])
-
+    @term.update_artist_terms
     respond_to do |format|
       if @term.update_attributes(params[:term])
         format.html { redirect_to @term, notice: 'Term was successfully updated.' }

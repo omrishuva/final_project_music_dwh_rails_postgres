@@ -11,10 +11,15 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130125145609) do
+ActiveRecord::Schema.define(:version => 20130325082148) do
 
   create_table "albums", :primary_key => "release_7digitalid", :force => true do |t|
     t.string "name"
+  end
+
+  create_table "artist_albums", :force => true do |t|
+    t.string "artist_id"
+    t.string "album_id"
   end
 
   create_table "artist_terms", :force => true do |t|
@@ -24,24 +29,59 @@ ActiveRecord::Schema.define(:version => 20130125145609) do
     t.float   "freq"
     t.float   "weight"
     t.integer "term_id"
+    t.string  "category"
   end
 
   add_index "artist_terms", ["artist_id"], :name => "index_artist_terms_on_artist_id"
+  add_index "artist_terms", ["name"], :name => "index_artist_terms_on_name"
   add_index "artist_terms", ["term_id"], :name => "index_artist_terms_on_term_id"
 
   create_table "artists", :id => false, :force => true do |t|
-    t.string "artist_id",          :null => false
-    t.string "artist_7digital_id"
-    t.string "artist_mbid"
-    t.string "artist_pm_id"
-    t.string "artist_name"
-    t.float  "artist_hotness"
-    t.float  "artist_fam"
+    t.string  "id",                                :null => false
+    t.string  "artist_7digital_id"
+    t.string  "artist_mbid"
+    t.string  "artist_pm_id"
+    t.string  "artist_name"
+    t.float   "artist_hotness"
+    t.float   "artist_fam"
+    t.integer "songs_count",        :default => 0
+    t.integer "similars_count",     :default => 0
+  end
+
+  create_table "attributes", :force => true do |t|
+    t.string   "attribute_name"
+    t.string   "attribute_type"
+    t.datetime "created_at",     :null => false
+    t.datetime "updated_at",     :null => false
+    t.integer  "table_id"
+    t.string   "alter_name"
+  end
+
+  create_table "facts", :force => true do |t|
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+    t.string   "name"
+    t.integer  "table_id"
+  end
+
+  create_table "queries", :force => true do |t|
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
   end
 
   create_table "similarities", :force => true do |t|
     t.string "artist_id"
     t.string "target_id"
+  end
+
+  add_index "similarities", ["artist_id"], :name => "index_similarities_on_artist_id"
+
+  create_table "snow_dims", :force => true do |t|
+    t.string   "name"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+    t.integer  "star_dim_id"
+    t.integer  "table_id"
   end
 
   create_table "songs", :id => false, :force => true do |t|
@@ -292,6 +332,7 @@ ActiveRecord::Schema.define(:version => 20130125145609) do
     t.float   "tatms_start_sum"
   end
 
+  add_index "songs", ["album_id"], :name => "index_songs_on_album_id"
   add_index "songs", ["artist_id"], :name => "index_songs_on_artist_id"
   add_index "songs", ["danceability"], :name => "index_songs_on_danceability"
   add_index "songs", ["energy"], :name => "index_songs_on_energy"
@@ -300,12 +341,27 @@ ActiveRecord::Schema.define(:version => 20130125145609) do
   add_index "songs", ["song_key"], :name => "index_songs_on_song_key"
   add_index "songs", ["tempo"], :name => "index_songs_on_tempo"
 
+  create_table "star_dims", :force => true do |t|
+    t.string   "name"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+    t.integer  "fact_id"
+    t.integer  "table_id"
+  end
+
+  create_table "tables", :force => true do |t|
+    t.string   "name"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
   create_table "terms", :force => true do |t|
     t.string  "term"
     t.string  "category"
     t.integer "count"
     t.float   "freq_avg"
     t.float   "weight_avg"
+    t.integer "genre_count"
   end
 
 end

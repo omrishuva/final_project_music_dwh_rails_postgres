@@ -1,0 +1,9 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  dim_name,: MyString
+  relation_name: MyString
+
+two:
+  dim_name,: MyString
+  relation_name: MyString

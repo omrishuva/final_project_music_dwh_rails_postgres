@@ -15,12 +15,13 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </a>
-          <a class="brand" href="#">Project name</a>
+          <div><%=link_to 'Query music', root_path , :class=>"brand"%></div>
           <div class="nav-collapse collapse">
             <ul class="nav">
-              <li class="active"><a href="#">Home</a></li>
-              <li><a href="#about">About</a></li>
-              <li><a href="#contact">Contact</a></li>
+              <li><%=link_to 'Songs', song_path(Song.first)    %></li>
+              <li><%= link_to 'Terms',   term_analysis_terms_path %></li>
+              <li><%= link_to 'Artists', analysis_artists_path %></li>
+              <li><a href="#contact"></a></li>
             </ul>
           </div><!--/.nav-collapse -->
         </div>

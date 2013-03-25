@@ -1,0 +1,9 @@
+<div class="container">
+  <div class="row-fluid pagination-centered">
+    <div class="span12 ">
+      <h1>Dashboard</h1>   
+				<%=render partial: 'phase_1', locals:{facts: @facts} unless params[:fact]%>
+				<%=render partial: 'phase_2', locals:{selected_fact: params[:fact]} if params[:fact]%>
+		</div>
+	</div>
+</div>				

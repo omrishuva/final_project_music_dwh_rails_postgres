@@ -1,0 +1,20 @@
+<div class="container">
+  <div class="row-fluid pagination-centered">
+    <div class="span12 ">
+      <h1>Artists analysis <h1>
+      	<%=form_tag  analysis_artists_path,:class=>"form-search",remote:true,method:'get'  do %>
+         <%= text_field_tag :search,nil,:class=>"input-large search-query",placeholder:"search for artists" %>
+        <button type="submit" class="btn",value="submit">Search</button>
+       <%end%>
+    </div>
+  </div>
+</div>
+
+<div class="container pagination-centered">
+  <div class="row">
+      <div class="items">
+      
+      </div>
+    </div> 
+  </div>
+</div>     

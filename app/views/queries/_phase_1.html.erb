@@ -1,0 +1,15 @@
+
+<div class="container">
+  <div class="row-fluid pagination-centered">
+    <div class="span12">    
+      <h3>select fact :<h3>
+      <%facts.each do |fact|%>
+        <span3>
+           <span1>
+             <%=link_to(fact.name,dashboard_queries_path(params.merge({fact:fact.name}))) %>
+           </span1>
+        </span3>
+      <%end%>
+    </div>
+  </div>  
+</div>  

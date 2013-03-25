@@ -1,0 +1,76 @@
+	<h5 class="pagination-centered"> 
+		<%="showing results for:"%>
+		<%= link_to items[:self][:artist_name], edit_artist_path(items[:self][:id])%> 
+	</h5>
+	
+	<div class="hero-unit">
+		<div class="row-fluid show-grid">
+			<div class="span4">
+				<ul>
+				<li><h4><%="familiarity:  #{items[:self][:artist_fam].round(4)}" %></h4></li>
+				<li><h4><%="hotness:      #{items[:self][:artist_hotness].round(4)}"%></h4></li>
+				<li><h4><%="songs count:  #{items[:songs_count]}"%></h4></li>
+				<li><h4><%="similar artists count:  #{items[:similars_count]}"%></h4></li>
+				<li><h4><%="years range:  #{items[:years_range]}"%></h4></li>	
+		  </div>
+		  </ul>	
+		  <div class="span8">
+				<table class="table-hover">
+			  	<thead>
+			    	<th><h3>Albums</h3></th>
+			  	</thead>	
+						<tbody>
+							<%items[:albums].each do |item|%>
+				  				<tr>	
+		  							<td>
+		  								<strong>
+		  									<%= item[:name] %>
+		  									<%= item[:min_year] %>
+		  									<%= item[:max_year] %>
+		  								</strong>
+		  							</td>	
+									</tr>
+							<%end%>
+						</tbody>					
+					</table>  	  
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="bs-docs-grid pagination-centered">		
+		<%items[:terms].each do |item|%>
+			<div class="hero-unit">
+				<div class="row-fluid show-grid">
+					<div class="span4">
+						<%if item %>
+						<h3><%=pluralize(items.size,item[0][:category].to_s)%></h3>		
+				  	<%end%>
+				  </div>	
+				  	<div class="span8">
+					  	<table class="table-hover">
+					  		<thead>
+					    		<th><h4>term</h4></th>
+					      	<th><h4>freq</h4></th>
+					      	<th><h4>weight</h4></th>
+					  		</thead>	
+								<tbody>
+									<%item.each do |i|%>
+						  				<tr>	
+				  							<td>
+				  								<strong>
+				  									<%=link_to i[:name] ,edit_term_path(i[:term_id])%>
+				  								</strong>
+				  							</td>	
+											<td><%=i[:freq].round(3)%></td>
+											<td><%=i[:weight].round(3)%></td>
+										</tr>
+									<%end%>
+								</tbody>					
+							</table>  	  
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>	
+	<%end%>		

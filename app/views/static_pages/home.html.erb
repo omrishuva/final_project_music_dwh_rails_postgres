@@ -1,0 +1,53 @@
+
+
+<div class="container">
+
+      <div class="hero-unit">
+        <h1>Welcome to Query music</h1>
+        <h2>Project stats<h2>
+        <div class = "container">
+          <div class="row-fluid show-grid">	
+        		<div class="span4">
+        			<h4><%=pluralize(@artist_num,'artist')%></h4>
+							<h4><%=pluralize(@songs_num,'song')%></h4>
+        		</div>
+        		<div class="span4">
+        			<h4><%=pluralize(@terms_num,'term')%></h4>
+        			<h4><%=pluralize(@artist_terms_num,'artist term tag')%></h4>
+        		</div>
+        		<div class="span4">
+        			<h4><%=pluralize(@albums_num,'album')%></h4>
+              <h4><%=pluralize(@artist_similarities_num,'artist similarity')%></h4>
+        		</div>
+        	</div>
+        </div>			
+        <p><a class="btn btn-primary btn-large">Learn more &raquo;</a></p>
+      	
+      </div>
+
+      <!-- Example row of columns -->
+      <div class="row">
+        <div class="span4">
+          <h2>Artists analysis</h2>
+          <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+          <p><a class="btn" href="#">Start analyze &raquo;</a></p>
+        </div>
+        <div class="span4">
+          <h2>Songs Analysis</h2>
+          <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+          <p><a class="btn" href="#">Start analyze &raquo;</a></p>
+       </div>
+        <div class="span4">
+          <h2>Terms Analysis</h2>
+          <p>Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
+          <p><a class="btn" href="#">Start analyze &raquo;</a></p>
+        </div>
+      </div>
+
+      <hr>
+
+      <footer>
+        <p>&copy; omri shuva 2013</p>
+      </footer>
+
+    </div> <!-- /container -->

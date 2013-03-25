@@ -1,0 +1,40 @@
+<%if items%>
+	<h5 class="pagination-centered"> 
+		<%="showing #{pluralize(items.flatten.size,'result')} for:"%>
+		<%= link_to term.term, edit_term_path(term.id)%> 
+	</h5>
+	<div class="bs-docs-grid pagination-centered">
+		<%items.each do |i|%>
+			<div class="hero-unit">
+				<div class="row-fluid show-grid">
+					<div class="span4">
+						<%if i %>
+						<h3><%=pluralize(i.size,i[0][:category].to_s)%></h3>		
+				  	<%end%>
+				  </div>	
+				  	<div class="span8">
+					  	<table class="table-hover">
+					  		<thead>
+					    		<th><h4>term</h4></th>
+					      	<th><h4>count</h4></th>
+					      	<th><h4>strengh</h4></th>
+					  		</thead>	
+								<tbody>
+									<%i.each do |t|%>
+						  			<tr>	
+				  						<td><strong><%= t[:term]%></strong></td>	
+				  						<td><%= t[:count]%></td>
+				  						<td><%= t[:strengh]%></td>
+										</tr>
+									<%end%>
+								</tbody>					
+							</table>  	  
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>	
+	<%end%>
+<%else%>
+	<p>term not found<p>
+<%end%>		
