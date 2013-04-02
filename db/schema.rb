@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130325082148) do
+ActiveRecord::Schema.define(:version => 20130327214303) do
 
   create_table "albums", :primary_key => "release_7digitalid", :force => true do |t|
     t.string "name"
@@ -46,6 +46,19 @@ ActiveRecord::Schema.define(:version => 20130325082148) do
     t.float   "artist_fam"
     t.integer "songs_count",        :default => 0
     t.integer "similars_count",     :default => 0
+  end
+
+  create_table "attribute_categories", :force => true do |t|
+    t.string   "name"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  create_table "attribute_category_relations", :force => true do |t|
+    t.integer  "attribute_id"
+    t.integer  "attribute_category_id"
+    t.datetime "created_at",            :null => false
+    t.datetime "updated_at",            :null => false
   end
 
   create_table "attributes", :force => true do |t|

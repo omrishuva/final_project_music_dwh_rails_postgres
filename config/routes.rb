@@ -5,16 +5,17 @@ Final::Application.routes.draw do
   
   resources :attributes do
     collection do
-      put 'add_category'
+      put 'dashboard'
     end
   end    
 
-  
-  resources :queries do
-    collection do 
-      get 'dashboard'
+  resources :tables do
+    collection do
+      put 'dashboard'
     end
   end
+    
+  resources :queries
 
   resources :songs do
     collection do

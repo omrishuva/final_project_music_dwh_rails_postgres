@@ -6,9 +6,9 @@
     </div>    
     
     <div class="span10">      
-      <%if params["table"]%>    
-        <%=render partial:'form',locals:{ attributes: @attributes }%>
-      <%end%>
+      <h1>Dashboard</h1>   
+		<%=render partial: 'phase_1', locals:{tables: @tables} unless params[:fact]%>
+		<%=render partial: 'phase_2', locals:{selected_fact: params[:fact]} if params[:fact]%>
     </div>
         
   </div>

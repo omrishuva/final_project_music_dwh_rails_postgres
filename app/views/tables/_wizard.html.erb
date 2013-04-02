@@ -1,0 +1,35 @@
+<%=form_tag dashboard_tables_path,:class=>"form-inline",method:'put' do %>     
+
+  <div class="span8">               
+    <div class="hero-unit">
+      
+      <div class="row">
+        <h4><%="Define Fact Table"%> <h4>
+        <%= select( "fact_table","id",tables )%>
+      </div>
+      
+      <div class="row">
+      
+        <h4><%="Define #{params["table"]} Dimensions"%> <h4>
+       
+        <table class="table table-hover">
+          <thead>
+            <th> Star</th>
+            <th> Snow (optional) </th>
+          </thead>
+            <%= render partial: "associations", locals:{tables:tables} %>
+        </table>  
+      
+      <div class="row">
+      
+      <button type="submit" class="btn btn-primary">save</button>
+
+    </div>
+  </div>    
+  
+  <div class="span2">  
+    <div class="affix">    
+    </div>
+  </div>  
+
+<%end%>

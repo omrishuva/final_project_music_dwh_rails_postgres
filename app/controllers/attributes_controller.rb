@@ -58,14 +58,16 @@ class AttributesController < ApplicationController
     end
   end
 
-  def add_category
-  	binding.pry
-  	#attributes = Attribute.where(id:1 )
+  def dashboard
+  	attributes = Attribute.where(id: params["selected"].keys )
+  	category = AttributeCategory.find_by_name( params["category"] ) || AttributeCategory.create( name: params["category"] )
+  	AttributeCategoryRelation.build_relation( attributes, category.id )
+  	redirect_to attributes_path
   end	
   # PUT /songs/1
   # PUT /songs/1.json
   def update
-    @song = Song.find(params[:id])
+    @attribute = Attribute.find(params[:id])
 
     respond_to do |format|
       if @song.update_attributes(params[:song])
@@ -78,18 +80,4 @@ class AttributesController < ApplicationController
     end
   end
 
-
-
-
-  # DELETE /songs/1
-  # DELETE /songs/1.json
-  def destroy
-    @song = Song.find(params[:id])
-    @song.destroy
-
-    respond_to do |format|
-      format.html { redirect_to songs_url }
-      format.json { head :no_content }
-    end
-  end
 end

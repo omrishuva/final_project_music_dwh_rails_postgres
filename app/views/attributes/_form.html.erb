@@ -1,0 +1,19 @@
+<%=form_tag dashboard_attributes_path,:class=>"form-inline",method:'put' do %>
+  <div class="container-fluid">
+    <div class="row-fluid">
+      
+      <div class="span8">               
+        <div class="hero-unit">
+          <%=render partial: 'show_attributes',locals:{attributes:@attributes}%>
+        </div>
+      </div>    
+      
+      <div class="span2">  
+        <div class="affix">
+            <%=render partial: 'add_category' if params["form_action"] == "tag" %>  
+        </div>
+      </div>  
+    
+    </div>        
+  </div>
+<%end%>

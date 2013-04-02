@@ -1,0 +1,13 @@
+<% 5.times do |i| %>
+	<tbody>
+		<td>
+			<%= check_box_tag("selected_star[#{i}]")%>
+			<%= select( "star","#{i}",tables )%>
+		</td>
+
+		<td>
+			<%= check_box_tag("selected_snow[#{i}]")%>
+			<%= select( "snow","#{i}",tables )%>
+		</td>
+	</tbody>
+<%end%>

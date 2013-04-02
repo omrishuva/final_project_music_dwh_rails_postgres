@@ -1,0 +1,21 @@
+<%actions = ['tag','hierarchies']%>
+<div class= "bs-docs-sidebar"> 
+  <ul class="nav nav-list bs-docs-sidenav affix">
+    <li><h5 class="muted">Choose Table :</h5></li>
+    <%tables.each do |table|%>
+      <li>
+        <%=link_to table , eval(params["controller"]+ "_path") +"?table=#{table}" %>
+      </l1>
+    <%end%>
+    <%if params["table"]%>
+      <li><h5 class="muted">Actions :</h5></li>
+      <%actions.each do |action|%>
+        <li>
+          <%=link_to action, attributes_path(params.merge({form_action:action})), class: "btn btn-small" %>
+          <hr>
+        </li>
+
+      <%end%>
+    <%end%>
+  </ul>  
+</div>

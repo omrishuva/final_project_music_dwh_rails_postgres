@@ -1,0 +1,14 @@
+<table class="table table-hover">
+	<thead>
+		<th>Select</th>
+		<th>Attributes</th>
+		<th>Category<th>
+	</thead>            
+	<% attributes.each do |attribute| %>
+		<tbody>
+			<td><%= check_box_tag("selected[#{attribute.id}]") %></td>
+			<td><%= label_tag attribute.attribute_name %></td>
+			<td><%=attribute.attribute_categories.first.try(:name) %></td>
+		</tbody>
+	<% end %>  
+</table>
