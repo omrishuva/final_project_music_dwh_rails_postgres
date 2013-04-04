@@ -2,13 +2,13 @@
 <div class="container-fluid">
   <div class="row-fluid">
     <div class="span2">
-      <%=render partial:'layouts/tables_side_bar',locals:{ tables: @tables }%>
+      <%=render partial:'layouts/tables_side_bar',locals:{ tables: @dims, param_name: "dims" } if params[:fact] %>
     </div>    
     
     <div class="span10">      
       <h1>Dashboard</h1>   
-		<%=render partial: 'phase_1', locals:{tables: @tables} unless params[:fact]%>
-		<%=render partial: 'phase_2', locals:{selected_fact: params[:fact]} if params[:fact]%>
+
+    <%=render partial: 'phase_1', locals:{tables: @facts} %>
     </div>
         
   </div>

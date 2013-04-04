@@ -4,7 +4,7 @@
     <li><h5 class="muted">Choose Table :</h5></li>
     <%tables.each do |table|%>
       <li>
-        <%=link_to table , eval(params["controller"]+ "_path") +"?table=#{table}" %>
+        <%=link_to table.name , eval(params["controller"]+ "_path") +"?#{param_name}=#{table.name}" %>
       </l1>
     <%end%>
     <%if params["table"]%>

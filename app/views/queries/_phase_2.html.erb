@@ -2,16 +2,15 @@
   <div class="row-fluid pagination-centered">
     <span12>    
       <span9>
-        <%=display_dims(eval(selected_fact))%>
       </span9>  
       <span3>
         <span1>
-          <h2> <%=selected_fact%> </h2>
+          <h2> </h2>
         </span1>
         <span2>
           <ul>
-            <%display_attributes(eval(selected_fact)).each do |attribute|%>
-            <li> <%= "#{attribute[:name]}  -  #{attribute[:type]}" %> </l1>
+            <%dims.each do |dim|%>
+            <li> <%= "#{dim.name} " %> </l1>
             <%end%>  
           <ul>    
         </span2>

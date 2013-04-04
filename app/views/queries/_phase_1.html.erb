@@ -1,11 +1,13 @@
 <div class="container">
   <div class="row-fluid pagination-centered">
     <div class="span12">    
-      <h3>select fact :<h3>
-      <%each.tables do |fact|%>
+      <h3><%= "select fact :" unless tables.size == 1 %><h3>
+      <% tables.each do |fact|%>
         <span3>
            <span1>
-             <%=link_to(fact.name,dashboard_queries_path(params.merge({fact:fact.name}))) %>
+             <label class="label" >
+                <%=link_to(fact.name,queries_path(params.merge({fact:fact.name}))) %>
+             </label>
            </span1>
         </span3>
       <%end%>

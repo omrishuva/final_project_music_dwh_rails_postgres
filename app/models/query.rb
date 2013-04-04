@@ -58,7 +58,7 @@ class Query < ActiveRecord::Base
 
 	def build_dim_filters(dims)
 		dims.select { |dim| dim[:where] }
-	end	
+	end
 
 	def build_fact_filters(dims)
 		formated_filters = []
