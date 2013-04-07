@@ -96,11 +96,11 @@ class Query < ActiveRecord::Base
 	end	
 
 	def star_relation_query
-		@fact.valid_attributes(@fact_subject).where(@fact_filters[:attribute]=> @fact_filters[:ids])
+		@fact.where(@fact_filters[:attribute]=> @fact_filters[:ids])
 	end	
 	
 	def snow_flake_relation_query
-		@fact.valid_attributes(@fact_subject).joins(@fact_where[:dim])
+		@fact.joins(@fact_where[:dim])
 		.where("#{@fact_where[:attribute]} IN (#{@fact_where[:ids]})")
 	end	
 

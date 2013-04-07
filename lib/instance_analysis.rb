@@ -5,15 +5,7 @@ module InstanceAnalysis
     klass.extend(ClassMethods)
   end
 	
-	def scatter_plot( dim , attribute)
-		query_results = dim.class.where(id:artist_id).select("count(song_id),#{dim}")
-		.order(attribute.to_sym).group(attribute.to_sym)
-    final_results = []
-    query_results.each do |qr|
-      final_results << {attribute.to_sym=>qr[:year], count:qr.count }
-    end  
-  	final_results
-	end	
+
 
 	def analyze
 

@@ -1,18 +1,16 @@
-<li><hr></li>
+<%=render partial: 'select_fact', locals:{tables: @fact} %>
+<hr>
 <div class="container-fluid">
   <div class="row-fluid">
+    
     <div class="span2">
-      <%=render partial:'layouts/tables_side_bar',locals:{ tables: @dims, param_name: "dims" } if params[:fact] %>
     </div>    
     
-    <div class="span10">      
-      <h1>Dashboard</h1>   
-
-    <%=render partial: 'phase_1', locals:{tables: @facts} %>
+    <div class="span10 query-builder">	
+    	
     </div>
         
   </div>
   
   </div>  
 </div>
-

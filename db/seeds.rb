@@ -18,10 +18,34 @@
 # artist.similars_count = artist.similarities.count
 # artist.save
 # end	
-artist_albums = ArtistAlbums.all
-index =1
-artist_albums.each do |aa|
-  aa.temp = index
-  aa.save
-  index+=1	
-end	
+# artist_albums = ArtistAlbums.all
+# index =1
+# artist_albums.each do |aa|
+#   aa.temp = index
+#   aa.save
+#   index+=1	
+# end
+
+t=Table.find 6
+ #.aggregations_query(
+ 	
+ args=	{ fact:{
+	 	 				actions:{
+	 	 					id:{ function: 'count'},
+	 	 					artist_fam:{ function: 'avg'},
+	 	 					artist_hotness:{ function: 'avg'},
+	 	 					songs_count:{function:'avg'}
+	 	 				},
+	 	 				where:{
+				 	 		artist_hotness:{
+				 	 			operator:">",
+				 	 			value: 0
+				 	 		},
+				 	 		artist_fam:{
+				 	 			operator:">",
+				 	 			value: 0
+				 	 		},
+		 	 			}
+ 	 				}
+ 				}
+  p t.aggregations_query( args )

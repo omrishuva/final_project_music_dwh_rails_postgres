@@ -1,21 +1,26 @@
-<div class="container">
-  <div class="row-fluid pagination-centered">
-    <span12>    
-      <span9>
-      </span9>  
-      <span3>
-        <span1>
-          <h2> </h2>
-        </span1>
-        <span2>
-          <ul>
-            <%dims.each do |dim|%>
-            <li> <%= "#{dim.name} " %> </l1>
-            <%end%>  
-          <ul>    
-        </span2>
-      </span3>
-    </span12>
+<%=form_tag queries_path,:class=>"form-inline",method:'get' do %>     
+
+  <div class="span8">               
+    <div class="hero-unit">
+      
+      <div class="row">
+        <p><%=fact.name%></p>
+      </div>
+      
+      <div class="row">
+             
+
+      <div class="row">
+      
+      <button type="submit" class="btn btn-primary">ask</button>
+
+    </div>
+  </div>    
+  
+  <div class="span2">  
+    <div class="affix">
+        <p><%=fact.name%></p> 
+    </div>
   </div>  
-<div>  
-   
+
+<%end%>

@@ -2,7 +2,7 @@ class AttributesController < ApplicationController
 
 
   def index
-    @tables = Table.all.map(&:name)
+    @tables = Table.all
     
     if params[:table]
     	table_id = Table.find_by_name params[:table]
