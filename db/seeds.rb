@@ -27,25 +27,47 @@
 # end
 
 t=Table.find 6
- #.aggregations_query(
  	
  args=	{ fact:{
-	 	 				actions:{
+	 	 				aggregations:{
 	 	 					id:{ function: 'count'},
-	 	 					artist_fam:{ function: 'avg'},
 	 	 					artist_hotness:{ function: 'avg'},
-	 	 					songs_count:{function:'avg'}
+	 	 					artist_fam:{ function: 'avg'},
+	 	 					year:{function:'avg'}
 	 	 				},
 	 	 				where:{
-				 	 		artist_hotness:{
-				 	 			operator:">",
-				 	 			value: 0
-				 	 		},
 				 	 		artist_fam:{
 				 	 			operator:">",
 				 	 			value: 0
 				 	 		},
-		 	 			}
- 	 				}
- 				}
-  p t.aggregations_query( args )
+				 	 		artist_hotness:{
+				 	 			operator:">",
+				 	 			value: 0
+				 	 		}
+ 				 	 	}
+ 	 				},
+ 					
+ 					dims:{
+ 						artist_terms:{
+ 							where:{
+								freq:{
+									operator:">",
+	 								value: "0.8"
+								}		
+							},	
+ 							snow_dim:{
+ 								terms:{
+	 								where:{
+	 									term:{
+	 										operator:"IN",
+											value: ["dub","reagge","mento"]	
+	 									}
+	 								}
+ 								}
+ 							}	
+ 						}
+					}	
+				}	
+ 			
+ 	binding.pry
+  p t.query!( args )

@@ -14,11 +14,11 @@ class StarDim < ActiveRecord::Base
 
    private
 
-   def get_attributes
-   	attributes.map{ |attribute| {name: attribute.name actions:  } }
+   # def get_attributes
+   # 	attributes.map{ |attribute| {name: attribute.name actions:  } }
    		
-   	end
-   end	
+   # 	end
+   # end	
    
    def has_snow_dim?
    	try(:snow_dims)
