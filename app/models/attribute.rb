@@ -14,24 +14,20 @@ class Attribute < ActiveRecord::Base
 
 	#aggregations
 
-	def sum
-		@sum ||= table_obj.sum(attribute_name)
-	end
-
-	def count
-		@count ||= table_obj.count(attribute_name)
+	def fact_actions
+		if attribute_type == "float" || attribute_type == "integer"
+			[ "sum", "avg" , "count" ]
+		elsif attribute_type == "string"
+			["count"]		
+		end		
 	end	
 
-	def max
-		@max ||= table_obj.maximum(attribute_name)
-	end
-
-	def min
-		@min ||= table_obj.minimum(attribute_name)
-	end
-
-	def avg
-		@avg ||= table_obj.average(attribute_name)
+	def dim_actions
+		if attribute_type == "float" || attribute_type == "integer"
+			[ ">", "<" , "=" ]
+		elsif attribute_type == "string"
+			["=" ,"IN" ]		
+		end
 	end	
 
 	def aggregations( actions )

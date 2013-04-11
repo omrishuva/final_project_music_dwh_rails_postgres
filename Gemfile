@@ -11,6 +11,7 @@ gem "mediawiki-gateway", "~> 0.5.1"
 #gem "echonest", "~> 0.3.0"
 #gem "echonest_resource"
 gem 'youtube_it'
+gem 'activerecord-postgres-hstore'
  
 
 # Gems used only for assets and not required

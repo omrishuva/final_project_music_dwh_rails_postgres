@@ -1,142 +1,269 @@
 class Query < ActiveRecord::Base
+	
+	attr_accessible :args, :fact_id
 	belongs_to :fact
-	belongs_to :dims
 	
-	# def initialize( fact ,dims =nil )
-		
-	# 	@qparams = {
-	# 		from: { #classes
-	# 			fact: fact[:class], #fact table class
-	# 			dims: dims.select { |dim| dim[:class] } #array of dimension class 
-	# 		},
-	# 		where: { #formatted where expresions
-	# 			dim:  build_dim_filters(dims), 
-	# 			fact: build_filters(dims)
-	# 		},
-	# 		group_by: { #formatted attributes to group by
-	# 			fact: fact[:group],
-	# 			dim: dims.select { |dim| dim[:group] 
-	# 			},
-	# 		having: { #formatted having expresions
-	# 			fact: fact[:having],
-	# 			dim:  dim[:having]
-	# 		},
-	# 		select: {
-	# 			attributes: { #selected attributes 
-	# 				fact: fact[:select],
-	# 				dim:  dim[:select]
-	# 			},
-	# 			calc: { #calculated or aggregated attributes
-	# 				fact: fact[:calc],
-	# 				dim:  dim[:calc]
-	# 			},
-	# 		relationship: dims ? analyze_relation(dim[:class]) : nil 
-	# 	}
+	serialize :args, ActiveRecord::Coders::Hstore
+	serialize :results, Array
 	
-	# end	
-	
-	def query_type_analyzer
-		#analyzes by the user params what kind of query to execute
-		#To DO : come up with query types
-		#only fact queries:
-		#
-		#fact 
-		#develop an algorithm that consider all possible options for queries
-	end	
-	
-	def return_existing_query_params
-
-	end	
-
-	def execute(action = nil)
-		
-		case query_type_analyzer
-			when :star then segment! 
+	class << self
+		def create(args , fact)	
+			query = new
+			query_params = { }
 			
-		end		
-	end
-
-	def build_dim_filters(dims)
-		dims.select { |dim| dim[:where] }
-	end
-
-	def build_fact_filters(dims)
-		formated_filters = []
-		dims.each do |dim|
-			case @relation
-				when :star       then attribute = dim[:class].to_star_foreign_key
-				when :snow_flake then attribute = dim[:class].to_snow_foreign_key		
+			if fact_aggregations_query?(args)
+				add_as_key!(args[:fact][:aggregations], query)
+				query_params.merge!('select' => "#{fact_select_string(args[:fact][:aggregations], fact)}" )
+			end	
+			
+			if by_snow_dim_query?(args)
+				query_params.merge!( 'join' => "#{snow_dims(args)}")
 			end
 
-			formated_filters << {
-		 		dim: dim[:class].to_table.to_sym, 
-		 		relation: relation.to_s,
-		 		fk: @relation == :star ? dim[:class].to_star_fk : dim[:class].to_snow_fk,
-		 		ids: dim[:class].where(@dim_where).map(&:id).join(',')
-		  }
-		end
-	formated_filters.first
-	end	
-	
-	def get_association(dim)
-		fact_dim_relation = @fact.reflect_on_association(dim.to_table.to_sym).try(:macro)
-		unless fact_dim_relation
-			fact_dim_relation = @fact.reflect_on_association(dim.to_table.singularize.to_sym).try(:macro)
-		end
-		fact_dim_relation
-	end	
-	
-	def analyze_relation(dim)
-		relation = get_association(dim)
-		case relation 
-			when :belongs_to then relation_type = :star
-			when :has_many   then relation_type = :snow_flake 						
-		end
-		relation_type	
-	end	
+			if by_star_dim_query?(args) && by_snow_dim_query?(args) && fact_where_query?(args)
+			
+				query_params.merge!( 'where' => "#{full_where_string(args, fact)}")
+			
+			elsif !fact_where_query?(args) && by_star_dim_query?(args) && by_snow_dim_query?(args)
+			
+				query_params.merge!( 'where' => "#{dims_where_string(args[:dims])}")
+			
+			elsif !by_star_dim_query?(args) && by_snow_dim_query?(args) && fact_where_query?(args)
+			
+				query_params.merge!( 'where' => "#{fact_snow_where_string(args)}")
+			
+			elsif !by_snow_dim_query?(args) && by_star_dim_query?(args) && fact_where_query?(args)
+				
+				query_params.merge!( 'where' => "#{dim_filters(args[:dims])} and #{fact_where_string(args[:fact][:where],fact)}")
+			
+			elsif !by_snow_dim_query?(args) && !fact_where_query?(args) && by_star_dim_query?(args)
+				
+				query_params.merge!( 'where' => "#{dim_filters(args[:dims])}")
 
-	def star_relation_query
-		@fact.where(@fact_filters[:attribute]=> @fact_filters[:ids])
-	end	
-	
-	def snow_flake_relation_query
-		@fact.joins(@fact_where[:dim])
-		.where("#{@fact_where[:attribute]} IN (#{@fact_where[:ids]})")
-	end	
+			elsif by_snow_dim_query?(args) && !by_star_dim_query?(args) && !fact_where_query?(args) 
 
-	def avg
-		snow_flake_relation_query.group(@dim_groups.first).average(@fact_calc)
-	end	
-	
-	#results manipulation			
-	
-	def segment! 
-		place_in_groups!(divide_to_groups(@fact_calc))
+				query_params.merge!( 'where' => "#{fact_where_string(args, fact)}")	
+			
+
+			elsif !by_snow_dim_query?(args) && !by_star_dim_query?(args) && fact_where_query?(args) 
+
+				query_params.merge!( 'where' => "#{fact_where_string(args[:dims], fact)}")	
+			end
+
+			query.fact_id = fact.id
+			query.args    = query_params
+			query.save
+
+		end	
 	end
 
-	def place_in_groups!(groups)
-		 groups.each do |group|
-		 	results = { objects: @data.select{ |d| d[@fact_subject]>group[:min] && d[@fact_subject]<group[:max] } } 
-			results.merge!( { count: results[:objects].size } )
-			group.merge!(results)
+
+	def execute
+		
+		case 
+			when select_where_join_query? then rslt = select_where_join_query
+			when select_where_query?      then rslt = select_where_query
+			when select_join_query?       then rslt = select_join_query 	
+			when select_query?            then rslt = select_query?
+			when where_join_query?        then rslt = where_join_query
+			when where_query?             then rslt = where_query 
+			when join_query?							then rslt = join_query?							
+		end
+	format_results(rslt)
+
+	end		
+	
+	private
+
+	def format_results(rslt)
+		final_result = {}
+		results.each do |result_name|
+			final_result.merge!(result_name => rslt.send(result_name))
+		end
+		final_result
+	end
+
+	def join_string
+		JSON.parse(args['join']).map{ |j| j.to_sym }
+	end	
+
+	def join_query
+		fact_obj.joins(join_string)
+	end
+
+	def where_query
+		fact_obj.where(args['where'])
+	end
+
+	def select_query
+		fact_obj.select(args['select'])
+	end
+
+	def select_where_join_query
+		fact_obj.joins(join_string).where(args['where']).select(args['select']).first
+	end	
+	
+	def select_where_query
+		fact_obj.where(args['where']).select(args['select']).first
+	end	
+
+	def join_query?
+		args.keys.include? 'join'
+	end
+
+	def select_query?
+		args.keys.include? 'select'
+	end 
+
+	def where_query?
+		args.keys.include? 'where'
+	end
+
+	def select_where_join_query?
+		select_query? && where_query? && join_query?
+	end
+
+	def select_where_query?
+		select_query? && where_query? && !join_query?
+	end
+
+	def select_join_query?
+		select_query? && join_query? && !where_query?
+ 	end
+
+ 	def where_join_query?
+ 		join_query? && where_query? && !select_query?
+ 	end	
+
+ 	def fact_obj
+		eval(fact.name.classify)
+	end
+
+	class << self
+	#query type##########################################################################
+		
+		def fact_aggregations_query?( args )
+			args[:fact].keys.include?(:aggregations)
+		end
+
+		def fact_where_query?(args)
+			args[:fact].keys.include?(:where)
+		end
+
+		def fact_where_aggregations_query?( args )
+			fact_where_query?(args) and fact_aggregations_query?(args)
+		end
+
+		def by_star_dim_query?( args )
+			args[:dims].keys.map{ |dim| args[:dims][dim].keys }
+			.flatten.include?(:where) if args[:dims]						
+		end	
+		
+		def by_snow_dim_query?( args )
+			args[:dims].keys.map{ |dim| args[:dims][dim].keys }
+			.flatten.include?(:snow_dim) if args[:dims]
+		end
+	#query string utils#################################################################
+	
+		def add_as_key!(args, query)
+			args.keys.each do |key|
+				args[key].merge!( as: "#{args[key][:function]}_#{key}" )
+				query.results << args[key][:as]
+			end
+			args
+		end	
+
+		def dim_filters(args)
+			args.keys.map{ |key| "#{key.to_s}_id IN #{dimension_filter(key, args)}"}.join(" and ") 
+		end
+
+		def dimension_filter(key, args)
+			in_operator dim_obj(key).where(star_dim_where_string(args)).map(&:id)
+		end
+
+		def in_operator(args)
+			"(#{args.map{ |obj| add_comma!(obj) }.join(',')})"
+		end	
+
+		def add_comma!(id)
+			"'#{id}'"
+		end
+
+		def snow_dims(args)
+			args[:dims].keys.map{ |dim| args[:dims][dim][:snow_dim].keys}
+			.flatten.map{|a| a.to_s }
+		end	
+		#args[:fact]
+		
+		def full_where_string(args, fact)
+			[fact_where_string(args[:fact][:where], fact),
+			 dims_where_string(args[:dims])
+			 ].flatten.compact.join(" AND ")
+		end	
+
+		def fact_where_string( fact_where, fact )
+			fact_where.keys.map do |key|	
+				"#{fact.table_name}.#{key} #{fact_where[key][:operator]} #{fact_where[key][:value]}"
+			end.join(" AND ")
+		end
+		
+		#args[:dims]
+		def dims_where_string(dims)
+		[ star_dim_where_string(dims), snow_dim_where_string(dims)].flatten.join(" AND ")
+		end	
+
+		def star_dim_where_string(dims)
+			dims.keys.map do |dim|
+				dims[dim][:where].keys.map do |star_key|
+				  
+				  if dims[dim][:where][star_key][:operator] == "IN"
+				 		value =	in_operator(dims[dim][:where][star_key][:value])
+				  else
+				 		value = dims[dim][:where][star_key][:value]
+				  end			
+
+				  "#{dim_obj(dim.to_s).table_name}.#{star_key} #{dims[dim][:where][star_key][:operator]} #{value}"
+				end
+			end.flatten
+		end
+
+		def snow_dim_where_string(dims)
+			dims.keys.map do |dim|
+				dims[dim][:snow_dim].keys.map do |snow|
+					dims[dim][:snow_dim][snow][:where].keys.map do |snow_key|
+						
+						if dims[dim][:snow_dim][snow][:where][snow_key][:operator] == "IN"
+				 			value =	in_operator(dims[dim][:snow_dim][snow][:where][snow_key][:value])
+				 		else
+				 			value = dims[dim][:snow_dim][snow][:where][snow_key][:value]
+				 		end
+
+						"#{dim_obj(snow.to_s).table_name}.#{snow_key} #{dims[dim][:snow_dim][snow][:where][snow_key][:operator]} #{value}"
+					end		
+				end
+			end.flatten
+		end
+
+		def fact_snow_where_string(args, fact)
+			[ snow_dim_where_string(args[:dims]), fact_where_string(args[:fact][:where], fact) ].flatten.join(" AND ")
+		end
+		
+		def fact_star_where_string(args, fact)
+			[ star_dim_where_string(args[:dims]), fact_where_string(args[:fact][:where], fact) ].flatten.join(" AND ")
+		end
+			
+		def fact_select_string(args, fact)
+			args.keys
+			.map{ |key| "#{args[key][:function]}(#{fact.table_name}.#{key}) AS #{args[key][:as]}" } 
+			.join(",")
+		end	
+
+		#general utils###############################################################	
+
+		def dim_obj(key)
+			eval(key.to_s.classify)
 		end	
 	end	
 
-	def divide_to_groups( dim_ids,group_num = 5  )		
-			
-			max = @params[:from][:fact].maximum(@params[:select][:calc])
-			min = @params[:from][:fact].minimum(@params[:select][:calc])
-			diff = (max - min)/group_num
-			
-			groups = []
-			groups << { min: min , max: min + diff }
-
-			(group_num -1).times.with_index do |idx| 
-				groups << { min: groups[idx][:max] , max: groups[idx][:max] + diff }
-			end	
-			groups
-	end	
-	
-end	
-
+end
 

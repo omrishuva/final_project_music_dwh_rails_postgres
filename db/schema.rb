@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130327214303) do
+ActiveRecord::Schema.define(:version => 20130410141706) do
 
   create_table "albums", :primary_key => "release_7digitalid", :force => true do |t|
     t.string "name"
@@ -80,7 +80,13 @@ ActiveRecord::Schema.define(:version => 20130327214303) do
   create_table "queries", :force => true do |t|
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
+    t.hstore   "args"
+    t.integer  "fact_id"
+    t.string   "query_type"
+    t.text     "results"
   end
+
+  add_index "queries", ["args"], :name => "queries_args"
 
   create_table "similarities", :force => true do |t|
     t.string "artist_id"

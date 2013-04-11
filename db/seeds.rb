@@ -26,14 +26,13 @@
 #   index+=1	
 # end
 
-t=Table.find 6
+t1=Table.find 6
  	
- args=	{ fact:{
+ args1=	{ fact:{
 	 	 				aggregations:{
 	 	 					id:{ function: 'count'},
 	 	 					artist_hotness:{ function: 'avg'},
 	 	 					artist_fam:{ function: 'avg'},
-	 	 					year:{function:'avg'}
 	 	 				},
 	 	 				where:{
 				 	 		artist_fam:{
@@ -41,7 +40,7 @@ t=Table.find 6
 				 	 			value: 0
 				 	 		},
 				 	 		artist_hotness:{
-				 	 			operator:">",
+				 	 			operator:">",snow_dim
 				 	 			value: 0
 				 	 		}
  				 	 	}
@@ -69,5 +68,34 @@ t=Table.find 6
 					}	
 				}	
  			
+t2=Table.find 3
+
+args2=	{ fact:{
+	 	 				aggregations:{
+	 	 					song_id:{ function: 'count'},
+	 	 					song_hot:{ function: 'avg'},
+	 	 				},
+	 	 				where:{
+				 	 		song_hot:{
+				 	 			operator:">",
+				 	 			value: 0
+				 	 		},		
+ 				 	 	}
+ 	 				},
+ 					
+ 					dims:{
+ 						artist:{
+ 							where:{
+								artist_name:{
+									operator:"IN",
+	 								value: ['the doors', 'the clash', 'jimi hendrix']
+								}		
+							}		
+ 						}
+					}	
+				}	
+
+
  	binding.pry
-  p t.query!( args )
+  Query.create(args1, t1.fact)
+  
