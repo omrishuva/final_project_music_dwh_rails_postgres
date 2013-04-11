@@ -1,0 +1,18 @@
+<%=form_tag queries_path,:class=>"form-inline" do %>
+<div class="form-actions">
+   <button type="submit" class="btn btn-primary btn-large ">ask&raquo;</button>
+ </div>    
+  <%=hidden_field_tag('fact' , params[:fact]) %> 
+  <span class="span12"> 
+    <div class="span4">
+      <div class="row">
+        <%=render partial: 'fact_actions', locals:{ fact:@fact.get_attributes_and_actions, fact_name: fact.name }  %>	
+      </div>
+    </div>    
+    <div class="span8">  	
+  		<h3>Filter it by:</h3>
+      <%=render partial: 'dim_filters', locals:{ dims:dims[:dims] }  %>
+    </div>
+  </span>
+  
+<%end%>

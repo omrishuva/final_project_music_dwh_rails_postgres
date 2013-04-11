@@ -1,0 +1,11 @@
+<div class="row-fluid pagination-centered">    
+  <div class="span1">
+    <h5><%= "select fact :" %></h5>
+  </div>  
+  <% tables.each do |fact|%>
+    <div class="span1 fact ">
+      <h5><%=link_to(fact.name,queries_path(params.merge({fact:fact.name})),remote: true ) %></h5>
+    </div>
+  <%end%>
+</div>  
+

@@ -1,0 +1,6 @@
+This is a network visualization by artists
+created from this project database Artist And Similarity models
+
+The visualization was created with gephi (graph analysis software)
+the realation between artists and thier similars is a self referential.
+this type of relation is very similar to graph database, so I decided to take a try with gephi.
