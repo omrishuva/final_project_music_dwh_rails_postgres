@@ -16,7 +16,6 @@
       </tbody>
     <%end%>
   </table>
-  <%if dim[dim].keys.include? :snow_dims%>
-    <%binding.pry%>
-    <%=hidden_field_tag(dim.to_s ,"snow") %>
-  <%end%>  
+  <%if dims[dim].keys.include? :snow_dims%>
+    <%=hidden_field_tag("#{dim.to_s}_snow", dims[dim][:snow_dims].keys.first) %>
+  <%end%>
