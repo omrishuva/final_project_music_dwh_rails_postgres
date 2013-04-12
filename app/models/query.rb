@@ -7,7 +7,7 @@ class Query < ActiveRecord::Base
 	serialize :results, Array
 	
 	class << self
-		def create(args , fact)	
+		def create(args , fact)
 			query = new
 			query_params = { }
 			

@@ -2,14 +2,12 @@ class QueriesController < ApplicationController
 
 	def index
 		@fact = Fact.all if params[:fact].nil?
-		if params[:fact] 
+		if params[:fact]
 			@fact = fact
-			@dims = @fact.full_dimension_attributes
-		end	   
+		end
 		if params[:args]
 			@results = Query.create(args, fact).execute
 		end
-			
 	respond_to do |format|
       format.html # index.html.erb
       format.js {render :queries,layout: false}

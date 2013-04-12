@@ -23,7 +23,5 @@ class Fact < ActiveRecord::Base
     end
     {dims: dims}
 	end  		 
-
-   
-
+  
 end

@@ -1,7 +1,6 @@
-<% dims.keys.each do |dim| %>
-  <%=render partial: "dim_attributes", locals:{dims:dims, dim: dim} %>
-     <% if dims[dim][:snow_dims].present?%>
-      <%snow = dims[dim][:snow_dims].keys.first%>
-      <%=render partial: "dim_attributes", locals:{dims: dims[dim][:snow_dims], dim:snow} %>
+<% dims.each do |dim| %>
+  <%=render partial: "dim_attributes", locals:{dim:dim} %>
+     <% if dim.snow_dims.present?%>
+      <%=render partial: "dim_attributes", locals:{dim: dim.snow_dims.first} %>
   <%end%>
 <%end%>

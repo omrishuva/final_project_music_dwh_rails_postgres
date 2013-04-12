@@ -1,21 +1,20 @@
-<h4><%= link_to dim.to_s, '#', id: "#{dim.to_s}_button", onclick: "$('#table_#{dim.to_s}').toggle(); return false;" %></h4>
-  <table id="table_<%= dim.to_s %>" style="display:none;" class="form-inline"> 
-    <%dims[dim].keys.reject{ |key| key == :snow_dims }.each do |attribute|%>
+<h4><%= link_to dim.name.to_s, '#', id: "#{dim.name}_button", onclick: "$('#table_#{dim.name}').toggle(); return false;" %></h4>
+  <table id="table_<%= dim.name %>" style="display:none;" class="form-inline"> 
+    <%dim.table.attributes.each do |attribute|%>
       <tbody>
         <td>
-          <%= check_box_tag "selected[#{attribute.to_s}]", attribute, false, onClick: "
+          <%= check_box_tag "selected[#{attribute.attribute_name}]", attribute.attribute_name.to_sym, false, onClick: "
         if($(this).is(':checked')){
-          $('#dims_params_#{dim}_#{attribute}_value, #dims_params_#{dim}_#{attribute}_operator').attr('disabled',false);
+          $('#dims_params_#{dim.name}_#{attribute.attribute_name}_value, #dims_params_#{dim.name}_#{attribute.attribute_name}_operator').attr('disabled',false);
         }else{
-          $('#dims_params_#{dim}_#{attribute}_value, #dims_params_#{dim}_#{attribute}_operator').attr('disabled',true);
+          $('#dims_params_#{dim.name}_#{attribute}_value, #dims_params_#{dim.name}_#{attribute.attribute_name}_operator').attr('disabled',true);
         };" %>
-          <%= attribute.to_s %>
-          <%= select("dims_params[#{dim.to_s}][#{attribute}]", "operator",dims[dim][attribute][:operator]) %>
-          <%= text_field "dims_params[#{dim.to_s}][#{attribute}]", "value",:class=> "input-small" %> 
+          <%= attribute.attribute_name %>
+          <%= select("dims_params[#{dim.name}][#{attribute.attribute_name}]", "operator",attribute.dim_actions) %>
+          <%= text_field "dims_params[#{dim.name}][#{attribute.attribute_name}]", "value",:class=> "input-small" %> 
         </td>
       </tbody>
     <%end%>
   </table>
-  <%if dims[dim].keys.include? :snow_dims%>
-    <%=hidden_field_tag("#{dim.to_s}_snow", dims[dim][:snow_dims].keys.first) %>
-  <%end%>
+  <%snow_dim_hidden_field_param(dim) %>
+  

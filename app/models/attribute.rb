@@ -1,9 +1,11 @@
 class Attribute < ActiveRecord::Base
-  attr_accessible :attribute_name, :attribute_type, :table_id
-	belongs_to :table
+  attr_accessible :attribute_name, :attribute_type, :table_id, :actions
+  belongs_to :table
   has_many :attribute_category_relations
   has_many :attribute_categories ,:through => :attribute_category_relations
-
+  serialize :dim_actions, Array
+  serialize :fact_actions, Array
+  before_save :add_actions
  #  	def place_in_groups!(groups)
 	# 	 groups.each do |group|
 	# 	 	results = { objects: @data.select{ |d| d[@fact_subject]>group[:min] && d[@fact_subject]<group[:max] } } 
@@ -14,19 +16,13 @@ class Attribute < ActiveRecord::Base
 
 	#aggregations
 
-	def fact_actions
+	def add_actions
 		if attribute_type == "float" || attribute_type == "integer"
-			[ "sum", "avg" , "count" ]
+			self.fact_actions = [ "sum", "avg" , "count" ]
+			self.dim_actions  = [ ">", "<" , "=" ]
 		elsif attribute_type == "string"
-			["count"]
-		end
-	end
-
-	def dim_actions
-		if attribute_type == "float" || attribute_type == "integer"
-			[ ">", "<" , "=" ]
-		elsif attribute_type == "string"
-			["=" ,"IN","group" ]
+			self.fact_actions = ["count"]
+			self.dim_actions = ["=" ,"IN","group" ]
 		end
 	end
 	

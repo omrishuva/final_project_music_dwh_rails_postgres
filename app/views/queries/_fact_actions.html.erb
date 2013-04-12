@@ -1,21 +1,19 @@
-<h3><%=fact_name%></h3>
+<h3><%=fact.name%></h3>
 <h4>Show me</h4>
 <table>	
-	<% fact.keys.each do |attribute| %>
+	<% fact.table.attributes.each do |attribute| %>
 		<tbody>
 			<td>
 				<%= check_box_tag "button_action", attribute, false, onClick: "
 				if($(this).is(':checked')){
-					$('#action_params_#{attribute}').attr('disabled',false);
+					$('#action_params_#{attribute.attribute_name}').attr('disabled',false);
 				}else{
-					$('#action_params_#{attribute}').attr('disabled',true);
+					$('#action_params_#{attribute.attribute_name}').attr('disabled',true);
 				};" %>
 			</td>	
-				<td><%= select(:action_params, attribute, fact[attribute][:function], {class: 111})%></td>
+				<td><%= select(:action_params, attribute.attribute_name, attribute.fact_actions)%></td>
 			<td> of </td>
-			<td>
-				<%=attribute.to_s%>
-			</td>	
+			<td><%=attribute.attribute_name%></td>
 		</tbody>
 	<%end%>
 </table>
