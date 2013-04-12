@@ -1,30 +1,3 @@
-#require 'csv'
-#  term_ids = Term.select(:id).map(&:id)
-#  term_ids.each do |id| 
-#   p id
-#   terms = ArtistTerm.where(term_id:id) 
-#   p terms.first.name
-#   p terms.first.term_id
-#   terms.each do |t|
-#     t.category = Term.find(id).category       
-#     p "-------------------------------------------"
-#     t.save
-#   end 
-# end
-
-# artists = Artist.all
-# artists.each do |artist|
-# p artist[:artist_name].to_s + " " + artist.similarities.count(:artist_id).to_s
-# artist.similars_count = artist.similarities.count
-# artist.save
-# end	
-# artist_albums = ArtistAlbums.all
-# index =1
-# artist_albums.each do |aa|
-#   aa.temp = index
-#   aa.save
-#   index+=1	
-# end
 
 t1=Table.find 6
  	
@@ -40,7 +13,7 @@ t1=Table.find 6
 				 	 			value: 0
 				 	 		},
 				 	 		artist_hotness:{
-				 	 			operator:">",snow_dim
+				 	 			operator:">",
 				 	 			value: 0
 				 	 		}
  				 	 	}
@@ -96,6 +69,16 @@ args2=	{ fact:{
 				}	
 
 
- 	binding.pry
-  Query.create(args1, t1.fact)
+ 	
+ 	q1 = Query.create(args1, t1.fact)
+  q2 = Query.create(args2, t2.fact)
+  binding.pry
+  p q1.args['where']
+  p q1.args['select']
+  p q1.execute
+  p"-"*150
+  p"-"*150
+  p q2.args['where']
+  p q2.args['select']
+  p q2.execute
   

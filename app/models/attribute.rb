@@ -18,21 +18,20 @@ class Attribute < ActiveRecord::Base
 		if attribute_type == "float" || attribute_type == "integer"
 			[ "sum", "avg" , "count" ]
 		elsif attribute_type == "string"
-			["count"]		
-		end		
-	end	
+			["count"]
+		end
+	end
 
 	def dim_actions
 		if attribute_type == "float" || attribute_type == "integer"
 			[ ">", "<" , "=" ]
 		elsif attribute_type == "string"
-			["=" ,"IN" ]		
+			["=" ,"IN","group" ]
 		end
-	end	
-
+	end
+	
 	def aggregations( actions )
 		rslt = table_obj.select(actions.map{ |action| "#{action}(#{attribute_name}) AS #{action} " }.join(",") ).first
-		binding.pry
 		final_result = {}
 		actions.each do |action|
 			final_result.merge!(action.to_sym => rslt.send(action)) 
@@ -41,7 +40,7 @@ class Attribute < ActiveRecord::Base
 	end	
 
 #pre query actions
-	def discrete ( group_num = 5  )		
+	def discrete ( group_num = 5  )
 		max = table_obj.maximum(attribute_name)
 		min = table_obj.minimum(attribute_name)
 		diff = (max - min)/group_num

@@ -18,9 +18,7 @@ class QueriesController < ApplicationController
 	end 
 	
 	def create
-		# "action_params"=>{"artist_fam"=>"avg", "songs_count"=>"avg"}
-		#  {"terms"=>{"term"=>{"operator"=>"IN", "value"=>"jamaica, reage,dub"}}}
-		#  
+
 		binding.pry
 	end	
 
@@ -31,21 +29,35 @@ class QueriesController < ApplicationController
 	
 	private
 	
-	# def build_query_params
-	# 	{fact:{
-	# 		aggregations:{
-	# 			build_fact_params
-	# 		}
-	# 	}		
-	# end	
+	def build_query_params
+	# 	{"utf8"=>"✓",
+ # "authenticity_token"=>"ENDl/XdDK7MhbNSoOstHhPxUeyKJSwaY7frYRKVKRrs=",
+ # "fact"=>"Artist",
+ # "button_action"=>"similars_count",
+ # "action_params"=>
+ #  {"artist_hotness"=>"avg",
+ #   "artist_fam"=>"avg",
+ #   "songs_count"=>"avg",
+ #   "similars_count"=>"avg"},
+ # "artist_terms_snow"=>"terms",
+ # "selected"=>{"term"=>"term"},
+ # "dims_params"=>{"terms"=>{"term"=>{"operator"=>"group by", "value"=>""}}},
+ # "artist_albums_snow"=>"albums",
+ # "similarities_snow"=>"artists",
+ # "action"=>"create",
+ # "controller"=>"queries"}
+ 		
 	
-	# def build_fact_params
-	# 	fact_actions ={}
-	# 	params[:fact_actions].keys.each do |key|
-	# 		fact_actions.merge!({key.to_sym => params[:fact_actions][key]})
-	# 	end
-	# 	fact_actions
-	# end	
+	end
+	
+	def build_fact_hash
+		params[:action_params].keys.each do |key|
+			params[:action_params][key]
+		end	
+	end
+	
+	def build_dims_hash
+	end	
 
 	def fact
 		Fact.where(name: params[:fact]).first

@@ -53,7 +53,7 @@ class Query < ActiveRecord::Base
 			query.fact_id = fact.id
 			query.args    = query_params
 			query.save
-
+			query
 		end	
 	end
 
