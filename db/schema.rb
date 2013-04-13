@@ -68,8 +68,8 @@ ActiveRecord::Schema.define(:version => 20130413135534) do
     t.datetime "updated_at",     :null => false
     t.integer  "table_id"
     t.string   "alter_name"
-    t.text     "dim_actions"
     t.text     "fact_actions"
+    t.text     "dim_actions"
   end
 
   create_table "facts", :force => true do |t|

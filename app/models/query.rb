@@ -70,7 +70,6 @@ class Query < ActiveRecord::Base
 			when join_query?							then rslt = join_query?							
 		end
 	format_results(rslt)
-
 	end		
 	
 	private
@@ -163,6 +162,7 @@ class Query < ActiveRecord::Base
 			args[:dims].keys.map{ |dim| args[:dims][dim].keys }
 			.flatten.include?(:snow_dim) if args[:dims]
 		end
+
 	#query string utils#################################################################
 	
 		def add_as_key!(args, query)
