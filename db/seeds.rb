@@ -25,7 +25,7 @@ t1=Table.find 6
 								freq:{
 									operator:">",
 	 								value: "0.8"
-								}		
+								}
 							},	
  							snow_dim:{
  								terms:{

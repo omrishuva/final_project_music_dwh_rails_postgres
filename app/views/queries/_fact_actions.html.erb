@@ -4,16 +4,16 @@
 	<% fact.table.attributes.each do |attribute| %>
 		<tbody>
 			<td>
-				<%= check_box_tag "button_action", attribute, false, onClick: "
+				<%= check_box_tag "button_action", attribute.name, false, onClick: "
 				if($(this).is(':checked')){
-					$('#action_params_#{attribute.attribute_name}').attr('disabled',false);
+					$('#action_params_#{attribute.name}').attr('disabled',false);
 				}else{
-					$('#action_params_#{attribute.attribute_name}').attr('disabled',true);
+					$('#action_params_#{attribute.name}').attr('disabled',true);
 				};" %>
 			</td>	
-				<td><%= select(:action_params, attribute.attribute_name, attribute.fact_actions)%></td>
+				<td><%= select(:action_params, attribute.name, attribute.fact_actions)%></td>
 			<td> of </td>
-			<td><%=attribute.attribute_name%></td>
+			<td><%=attribute.name%></td>
 		</tbody>
 	<%end%>
 </table>
@@ -23,4 +23,3 @@
 		$('select, .input-small').attr('disabled', true);
 	});
 </script>
-

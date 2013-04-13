@@ -16,45 +16,58 @@ class QueriesController < ApplicationController
 	end 
 	
 	def create
+		@results = Query.create(build_query_params).execute
+	end
 
-		binding.pry
-	end	
-
-
-	def query_builder
-		redirect_to queries_path and return
-	end	
-	
 	private
 	
 	def build_query_params
-	# 	{"utf8"=>"✓",
- # "authenticity_token"=>"ENDl/XdDK7MhbNSoOstHhPxUeyKJSwaY7frYRKVKRrs=",
- # "fact"=>"Artist",
- # "button_action"=>"similars_count",
- # "action_params"=>
- #  {"artist_hotness"=>"avg",
- #   "artist_fam"=>"avg",
- #   "songs_count"=>"avg",
- #   "similars_count"=>"avg"},
- # "artist_terms_snow"=>"terms",
- # "selected"=>{"term"=>"term"},
- # "dims_params"=>{"terms"=>{"term"=>{"operator"=>"group by", "value"=>""}}},
- # "artist_albums_snow"=>"albums",
- # "similarities_snow"=>"artists",
- # "action"=>"create",
- # "controller"=>"queries"}
- 		
-	
+	 { build_fact_hash, build_complete_dims_hash }
 	end
 	
 	def build_fact_hash
+		aggregations = {}
 		params[:action_params].keys.each do |key|
-			params[:action_params][key]
+		aggregations.merge!({key.to_sym => {function: params[:action_params][key] }})	
 		end	
+		aggregations
 	end
 	
-	def build_dims_hash
+	def build_complete_dims_hash
+		snow_dims = []
+		params[:dims_params].keys.each do |key|
+			snow_dim_keys << params[key] if params[key]
+		end
+	
+		star_dim_keys = params[:dims_params].keys - snow_dim_keys
+		star_dims = build_dim_hash(star_dim_keys)
+		snow_dims = build_dim_hash(snow_dim_keys)
+		star_dim_keys.each do |star_key|
+			if params[star_key]
+				star_dims[star_key].merge!({ snow_dim:{ snow_dims[params[star_key]] } })
+			end	
+		end	
+	
+	end
+
+	def build_dim_filters(dim ,attribute)
+		{ attribute.to_sym => {
+			operator: params[:dims_params][dim][attribute][:operator],
+			value: params[:dims_params][dim][attribute][:value],
+			}
+		}
+	end	
+
+	def build_dim_hash(dims)
+		dims ={ }
+		dims.each do |dim|
+			dim_filters = {}
+			params[:dims_params][dim].keys.each do |attribute|
+				dim_filters.merge!(build_dim_filters)
+			end
+			dims.merge!( { dim.to_sym => {where: { dim_filters } } ) 	
+		end
+		dims
 	end	
 
 	def fact

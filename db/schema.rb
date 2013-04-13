@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130412082449) do
+ActiveRecord::Schema.define(:version => 20130413135534) do
 
   create_table "albums", :primary_key => "release_7digitalid", :force => true do |t|
     t.string "name"
@@ -62,14 +62,14 @@ ActiveRecord::Schema.define(:version => 20130412082449) do
   end
 
   create_table "attributes", :force => true do |t|
-    t.string   "attribute_name"
+    t.string   "name"
     t.string   "attribute_type"
     t.datetime "created_at",     :null => false
     t.datetime "updated_at",     :null => false
     t.integer  "table_id"
     t.string   "alter_name"
-    t.text     "fact_actions"
     t.text     "dim_actions"
+    t.text     "fact_actions"
   end
 
   create_table "facts", :force => true do |t|

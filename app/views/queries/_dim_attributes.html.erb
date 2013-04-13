@@ -3,18 +3,18 @@
     <%dim.table.attributes.each do |attribute|%>
       <tbody>
         <td>
-          <%= check_box_tag "selected[#{attribute.attribute_name}]", attribute.attribute_name.to_sym, false, onClick: "
+          <%= check_box_tag "selected[#{attribute.name}]", attribute.name.to_sym, false, onClick: "
         if($(this).is(':checked')){
-          $('#dims_params_#{dim.name}_#{attribute.attribute_name}_value, #dims_params_#{dim.name}_#{attribute.attribute_name}_operator').attr('disabled',false);
+          $('#dims_params_#{dim.name}_#{attribute.name}_value, #dims_params_#{dim.name}_#{attribute.name}_operator').attr('disabled',false);
         }else{
-          $('#dims_params_#{dim.name}_#{attribute}_value, #dims_params_#{dim.name}_#{attribute.attribute_name}_operator').attr('disabled',true);
+          $('#dims_params_#{dim.name}_#{attribute.name}_value, #dims_params_#{dim.name}_#{attribute.name}_operator').attr('disabled',true);
         };" %>
-          <%= attribute.attribute_name %>
-          <%= select("dims_params[#{dim.name}][#{attribute.attribute_name}]", "operator",attribute.dim_actions) %>
-          <%= text_field "dims_params[#{dim.name}][#{attribute.attribute_name}]", "value",:class=> "input-small" %> 
+          <%= attribute.name %>
+          <%= select("dims_params[#{dim.name}][#{attribute.name}]", "operator",attribute.dim_actions) %>
+          <%= text_field "dims_params[#{dim.name}][#{attribute.name}]", "value",:class=> "input-small" %> 
         </td>
       </tbody>
     <%end%>
   </table>
-  <%snow_dim_hidden_field_param(dim) %>
+  <%=snow_dim_hidden_field_param(dim)%>
   
