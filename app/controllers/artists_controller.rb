@@ -1,9 +1,8 @@
 class ArtistsController < ApplicationController
 
   def analysis
-    @dimensions = Artist.dimensions
     if params[:search]
-      @items = Artist.where( artist_name: params[:search].strip ).first.analyze
+      @items = Artist.where( artist_name: params[:search].strip.downcase ).first.analyze
     end
         
     respond_to do |format|

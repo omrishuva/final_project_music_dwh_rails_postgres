@@ -13,8 +13,15 @@ class Query < ActiveRecord::Base
 			
 			if fact_aggregations_query?(args)
 				add_as_key!(args[:fact][:aggregations], query)
-				query_params.merge!('select' => "#{fact_select_string(args[:fact][:aggregations], fact)}" )
-			end	
+				query_params.merge!('select' => "#{fact_select_string(args[:fact][:aggregations], fact)}" )	
+			end
+
+			if group_by_dim_query?(args)
+				build_group_by(args, query_params)
+				if !by_snow_dim_query?(args)
+					query_params.merge!("join" => args[:group].keys.map{ |k| k.to_s } )
+				end
+			end
 			
 			if by_snow_dim_query?(args)
 				query_params.merge!( 'join' => "#{snow_dims(args)}")
@@ -34,11 +41,11 @@ class Query < ActiveRecord::Base
 			
 			elsif !by_snow_dim_query?(args) && by_star_dim_query?(args) && fact_where_query?(args)
 				
-				query_params.merge!( 'where' => "#{dim_filters(args[:dims])} and #{fact_where_string(args[:fact][:where],fact)}")
+				query_params.merge!( 'where' => "#{dim_filters(args[:dims], fact)} and #{fact_where_string(args[:fact][:where],fact)}")
 			
 			elsif !by_snow_dim_query?(args) && !fact_where_query?(args) && by_star_dim_query?(args)
 				
-				query_params.merge!( 'where' => "#{dim_filters(args[:dims])}")
+				query_params.merge!( 'where' => "#{dim_filters(args[:dims], fact)}")
 
 			elsif by_snow_dim_query?(args) && !by_star_dim_query?(args) && !fact_where_query?(args) 
 
@@ -49,7 +56,7 @@ class Query < ActiveRecord::Base
 
 				query_params.merge!( 'where' => "#{fact_where_string(args[:dims], fact)}")	
 			end
-
+			binding.pry
 			query.fact_id = fact.id
 			query.args    = query_params
 			query.save
@@ -69,7 +76,7 @@ class Query < ActiveRecord::Base
 			when where_query?             then rslt = where_query 
 			when join_query?							then rslt = join_query?							
 		end
-	format_results(rslt)
+		rslt
 	end		
 	
 	private
@@ -99,13 +106,24 @@ class Query < ActiveRecord::Base
 	end
 
 	def select_where_join_query
-		fact_obj.joins(join_string).where(args['where']).select(args['select']).first
+		if group_query?
+			binding.pry
+			fact_obj.joins(join_string).where(args['where']).select(args['select']).group(args["group"])
+		else
+			fact_obj.joins(join_string).where(args['where']).select(args['select']).first
+		end
 	end	
 	
 	def select_where_query
-		fact_obj.where(args['where']).select(args['select']).first
+		if group_query?
+			fact_obj.where(args['where']).select(args['select']).group(args["group"])
+		else
+			fact_obj.where(args['where']).select(args['select']).first
+		end
 	end	
-
+	
+	#saved query types##########################################################
+	
 	def join_query?
 		args.keys.include? 'join'
 	end
@@ -117,6 +135,10 @@ class Query < ActiveRecord::Base
 	def where_query?
 		args.keys.include? 'where'
 	end
+
+	def group_query?
+		args.keys.include? 'group'
+	end	
 
 	def select_where_join_query?
 		select_query? && where_query? && join_query?
@@ -139,7 +161,10 @@ class Query < ActiveRecord::Base
 	end
 
 	class << self
-	#query type##########################################################################
+	#query type by args#####################################################################
+		def group_by_dim_query?(args)
+			args[:group].present?
+		end	
 		
 		def fact_aggregations_query?( args )
 			args[:fact].keys.include?(:aggregations)
@@ -173,28 +198,37 @@ class Query < ActiveRecord::Base
 			args
 		end	
 
-		def dim_filters(args)
-			args.keys.map{ |key| "#{key.to_s}_id IN #{dimension_filter(key, args)}"}.join(" and ") 
+		def dim_filters(args, fact)
+			args.keys.map do |key|
+			 "#{fact.table_name}.id IN #{dimension_filter(fact, key, args)}"
+			end.join(" and ") 
 		end
 
-		def dimension_filter(key, args)
-			in_operator dim_obj(key).where(star_dim_where_string(args)).map(&:id)
+		def dimension_filter(fact,key, args)
+			"(SELECT #{fact.name.downcase}_id FROM #{key} WHERE #{star_dim_where_string(args)})"
 		end
 
-		def in_operator(args)
-			"(#{args.map{ |obj| add_comma!(obj) }.join(',')})"
+		#deprecated
+		def in_operator(ids)
+			"(#{ids.map{ |id| add_comma!(id) }.join(',')})"
 		end	
-
 		def add_comma!(id)
 			"'#{id}'"
 		end
 
 		def snow_dims(args)
-			args[:dims].keys.map{ |dim| args[:dims][dim][:snow_dim].keys}
-			.flatten.map{|a| a.to_s }
+			snow_dims = args[:dims].keys.map{ |dim| args[:dims][dim][:snow_dim].keys }
+			if args[:group]
+				args[:group].keys.each do |key|
+					if dim_obj(key).class == 'SnowDim'
+						snow_dims << dim_obj(key)
+					end
+				end
+			end		
+			snow_dims.flatten.uniq.map{ |sd| sd.to_s }
 		end	
-		#args[:fact]
 		
+		#args[:fact]
 		def full_where_string(args, fact)
 			[fact_where_string(args[:fact][:where], fact),
 			 dims_where_string(args[:dims])
@@ -213,18 +247,19 @@ class Query < ActiveRecord::Base
 		end	
 
 		def star_dim_where_string(dims)
-			dims.keys.map do |dim|
-				dims[dim][:where].keys.map do |star_key|
-				  
-				  if dims[dim][:where][star_key][:operator] == "IN"
-				 		value =	in_operator(dims[dim][:where][star_key][:value])
-				  else
-				 		value = dims[dim][:where][star_key][:value]
-				  end			
+			where_string = dims.keys.map do |dim|
+					dims[dim][:where].keys.map do |star_key|
+					  
+					  if dims[dim][:where][star_key][:operator] == "IN"
+					 		value =	in_operator(dims[dim][:where][star_key][:value])
+					  else
+					 		value = dims[dim][:where][star_key][:value]
+					  end			
 
-				  "#{dim_obj(dim.to_s).table_name}.#{star_key} #{dims[dim][:where][star_key][:operator]} #{value}"
-				end
-			end.flatten
+					  "#{dim_obj(dim.to_s).table_name}.#{star_key} #{dims[dim][:where][star_key][:operator]} #{value}"
+					end
+				end.flatten
+			"(#{where_string.join(' AND ')})"	
 		end
 
 		def snow_dim_where_string(dims)
@@ -257,6 +292,12 @@ class Query < ActiveRecord::Base
 			.map{ |key| "#{args[key][:function]}(#{fact.table_name}.#{key}) AS #{args[key][:as]}" } 
 			.join(",")
 		end	
+
+		def build_group_by(args, query_params)
+			group = args[:group].keys.map{ |key| "#{key}.#{args[:group][key]}" }.join(', ')
+			query_params.merge!('group' => group )
+			query_params["select"] += ", #{group}"
+		end			
 
 		#general utils###############################################################	
 

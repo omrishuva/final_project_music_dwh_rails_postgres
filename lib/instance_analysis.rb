@@ -1,4 +1,3 @@
-
 module InstanceAnalysis
 	
 	def self.included(klass)
@@ -48,7 +47,7 @@ module InstanceAnalysis
 		end	
 		
 		def to_table
-			self.to_s.downcase.pluralize
+			self.to_s.tableize
 		end
 
 		def to_star_fk

@@ -16,13 +16,20 @@ class QueriesController < ApplicationController
 	end 
 	
 	def create
+		binding.pry
 		@results = Query.create(build_query_params, fact).execute
 	end
 
 	private
 	
 	def build_query_params
-	 { fact: {aggregations: build_fact_hash } }.merge!( { dims: build_complete_dims_hash } ) 
+	  if params[:group]
+		 		binding.pry
+		 		{ fact: {aggregations: build_fact_hash } }
+		 		.merge!( { dims: build_complete_dims_hash, group: params[:group] } )
+	  else
+	  	{ fact: {aggregations: build_fact_hash } }.merge!( { dims: build_complete_dims_hash } )
+	  end  
 	end
 	
 	def build_fact_hash
@@ -38,11 +45,11 @@ class QueriesController < ApplicationController
 		params[:dims_params].keys.each do |key|
 			snow_dim_keys << params[key] if params[key]
 		end
-	
+		
 		star_dim_keys = params[:dims_params].keys - snow_dim_keys
 		star_dims = build_dim_hash(star_dim_keys)
 		star_dim_keys.each do |star_key|
-			if params[star_key]
+			if params[:dims_params][star_key][params[star_key]]
 				snow_dim = build_dim_hash( [params[star_key]] )
 				star_dims[star_key.to_sym].merge!({ snow_dim: snow_dim })
 			end	

@@ -7,7 +7,7 @@
 	<% attributes.each do |attribute| %>
 		<tbody>
 			<td><%= check_box_tag("selected[#{attribute.id}]") %></td>
-			<td><%= label_tag attribute.attribute_name %></td>
+			<td><%= label_tag attribute.name %></td>
 			<td><%=attribute.attribute_categories.first.try(:name) %></td>
 		</tbody>
 	<% end %>  

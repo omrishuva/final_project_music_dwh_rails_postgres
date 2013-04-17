@@ -16,7 +16,7 @@ t1=Table.find 6
 				 	 			operator:">",
 				 	 			value: 0
 				 	 		}
- 				 	 	}
+ 				 	 	},
  	 				},
  					
  					dims:{
@@ -27,6 +27,7 @@ t1=Table.find 6
 	 								value: "0.8"
 								}
 							},	
+ 							
  							snow_dim:{
  								terms:{
 	 								where:{
@@ -34,7 +35,7 @@ t1=Table.find 6
 	 										operator:"IN",
 											value: ["dub","reagge","mento"]	
 	 									}
-	 								}
+	 								},
  								}
  							}	
  						}

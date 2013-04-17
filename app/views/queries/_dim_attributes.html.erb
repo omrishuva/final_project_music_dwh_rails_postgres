@@ -11,7 +11,8 @@
         };" %>
           <%= attribute.name %>
           <%= select("dims_params[#{dim.name}][#{attribute.name}]", "operator",attribute.dim_actions) %>
-          <%= text_field "dims_params[#{dim.name}][#{attribute.name}]", "value",:class=> "input-small" %> 
+          <%= text_field "dims_params[#{dim.name}][#{attribute.name}]", "value",:class=> "input-small" %>
+          <p class="select"><%= check_box_tag("group[#{dim.name}]", attribute.name.to_sym)%>group </p>
         </td>
       </tbody>
     <%end%>
