@@ -9,12 +9,19 @@
         }else{
           $('#dims_params_#{dim.name}_#{attribute.name}_value, #dims_params_#{dim.name}_#{attribute.name}_operator').attr('disabled',true);
         };" %>
-          <%= attribute.name %>
-          <%= select("dims_params[#{dim.name}][#{attribute.name}]", "operator",attribute.dim_actions) %>
-          <%= text_field "dims_params[#{dim.name}][#{attribute.name}]", "value",:class=> "input-small" %>
+        </td> 
+          <td>
+            <ul>
+              <li><%= attribute.name %></li>
+              <li class="attr">
+                <%= select("dims_params[#{dim.name}][#{attribute.name}]", "operator",attribute.dim_actions) %>
+                <%= text_field "dims_params[#{dim.name}][#{attribute.name}]", "value",:class=> "input-small" %>
+              </li>
+            </ul>
+        <td>  
           <%if attribute.attribute_type == "string"%>
             <p class="select">
-              <%= check_box_tag("group[#{dim.name}]", attribute.name.to_sym)%>
+              <%= check_box_tag("dim_group[#{dim.name}]", attribute.name.to_sym)%>
               <small>group</small> 
             </p>
           <%end%>

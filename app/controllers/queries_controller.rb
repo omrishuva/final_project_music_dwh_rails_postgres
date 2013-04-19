@@ -24,10 +24,16 @@ class QueriesController < ApplicationController
 	
 	def build_query_params
 	  case 
+	  
 	  	when params[:action_params] && params[:dims_params] && params[:group] then
 	  	 	group_by_with_dim_filters_query
+	 	  
 	 	  when params[:action_params] && params[:group] then group_by_query
+	 	  
+	 	  when 	params[:action_params] && params[:dims_params] then fact_aggregations_with_dim_filters 
+	  
 	  end  
+	
 	end
 	
 	def group_by_query
@@ -35,8 +41,15 @@ class QueriesController < ApplicationController
 	end	
 	
 	def group_by_with_dim_filters_query
-		{ fact: {aggregations: build_fact_hash } }.merge!( { group: params[:group] } )
-	end	
+		{ fact: {aggregations: build_fact_hash } }
+		.merge!({dims: build_complete_dims_hash })
+		.merge!( { group: params[:group] } )
+	end
+
+	def fact_aggregations_with_dim_filters
+		{ fact: {aggregations: build_fact_hash } }
+		.merge!({dims: build_complete_dims_hash })
+	end
 
 #build
 	def build_fact_hash

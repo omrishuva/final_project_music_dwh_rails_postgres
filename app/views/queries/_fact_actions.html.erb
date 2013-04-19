@@ -11,13 +11,18 @@
 					$('#action_params_#{attribute.name}').attr('disabled',true);
 				};" %>
 			</td>	
-				<td><%= select(:action_params, attribute.name, attribute.fact_actions)%></td>
-			<td> of </td>
-			<td><%=attribute.name%></td>
+				<td>
+					<ul>
+						<li><%=attribute.name%></li>
+						<li class="attr"><%= select(:action_params, attribute.name, attribute.fact_actions)%></li>
+					</ul>
+				</td>
       <%if attribute.attribute_type == "string"%>
 	      <td>
-	      	<%= check_box_tag("group[#{fact.name}]", attribute.name.to_sym) %>
-	       	<small>group</small>
+	      	<small>
+	      		<%= check_box_tag("fact_group[#{fact.table_name}]", attribute.name.to_sym) %>
+	       		group
+	       	</small>
 	      </td>
       <%end%>   	
 		</tbody>

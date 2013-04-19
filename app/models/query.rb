@@ -10,7 +10,7 @@ class Query < ActiveRecord::Base
 		def create(args , fact)
 			query = new
 			query_params = { }
-			
+			binding.pry
 			if fact_aggregations_query?(args)
 				add_as_key!(args[:fact][:aggregations], query)
 				query_params.merge!('select' => "#{fact_select_string(args[:fact][:aggregations], fact)}" )	
