@@ -14,6 +14,12 @@
 				<td><%= select(:action_params, attribute.name, attribute.fact_actions)%></td>
 			<td> of </td>
 			<td><%=attribute.name%></td>
+      <%if attribute.attribute_type == "string"%>
+	      <td>
+	      	<%= check_box_tag("group[#{fact.name}]", attribute.name.to_sym) %>
+	       	<small>group</small>
+	      </td>
+      <%end%>   	
 		</tbody>
 	<%end%>
 </table>
