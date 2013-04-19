@@ -12,7 +12,18 @@
           <%= attribute.name %>
           <%= select("dims_params[#{dim.name}][#{attribute.name}]", "operator",attribute.dim_actions) %>
           <%= text_field "dims_params[#{dim.name}][#{attribute.name}]", "value",:class=> "input-small" %>
-          <p class="select"><%= check_box_tag("group[#{dim.name}]", attribute.name.to_sym)%>group </p>
+          <%if attribute.attribute_type == "string"%>
+            <p class="select">
+              <%= check_box_tag("group[#{dim.name}]", attribute.name.to_sym)%>
+              <small>group</small> 
+            </p>
+          <%end%>
+          <%if attribute.attribute_type == "integer" || attribute.attribute_type == "float" %>
+            <p class="select">
+              <%= check_box_tag("descrete[#{dim.name}]", attribute.name.to_sym)%>
+              <small>descrete</small> 
+            </p>
+          <%end%>  
         </td>
       </tbody>
     <%end%>

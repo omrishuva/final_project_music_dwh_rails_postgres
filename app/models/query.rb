@@ -106,12 +106,7 @@ class Query < ActiveRecord::Base
 	end
 
 	def select_where_join_query
-		if group_query?
-			binding.pry
-			fact_obj.joins(join_string).where(args['where']).select(args['select']).group(args["group"])
-		else
-			fact_obj.joins(join_string).where(args['where']).select(args['select']).first
-		end
+		fact_obj.joins(join_string).where(args['where']).select(args['select']).group(args["group"])		
 	end	
 	
 	def select_where_query
@@ -119,6 +114,14 @@ class Query < ActiveRecord::Base
 			fact_obj.where(args['where']).select(args['select']).group(args["group"])
 		else
 			fact_obj.where(args['where']).select(args['select']).first
+		end
+	end
+
+	def select_join_query
+		if group_query?
+			fact_obj.joins(join_string).select(args['select']).group(args["group"])
+		else
+			fact_obj.joins(join_string).select(args['select']).first
 		end
 	end	
 	

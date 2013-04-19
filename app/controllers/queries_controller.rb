@@ -23,15 +23,22 @@ class QueriesController < ApplicationController
 	private
 	
 	def build_query_params
-	  if params[:group]
-		 		binding.pry
-		 		{ fact: {aggregations: build_fact_hash } }
-		 		.merge!( { dims: build_complete_dims_hash, group: params[:group] } )
-	  else
-	  	{ fact: {aggregations: build_fact_hash } }.merge!( { dims: build_complete_dims_hash } )
+	  case 
+	  	when params[:action_params] && params[:dims_params] && params[:group] then
+	  	 	group_by_with_dim_filters_query
+	 	  when params[:action_params] && params[:group] then group_by_query
 	  end  
 	end
 	
+	def group_by_query
+		{ fact: {aggregations: build_fact_hash } }.merge!( {  group: params[:group] } )
+	end	
+	
+	def group_by_with_dim_filters_query
+		{ fact: {aggregations: build_fact_hash } }.merge!( { group: params[:group] } )
+	end	
+
+#build
 	def build_fact_hash
 		aggregations = {}
 		params[:action_params].keys.each do |key|
