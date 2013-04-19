@@ -6,15 +6,8 @@ class Attribute < ActiveRecord::Base
   serialize :dim_actions, Array
   serialize :fact_actions, Array
   before_save :add_actions
- #  	def place_in_groups!(groups)
-	# 	 groups.each do |group|
-	# 	 	results = { objects: @data.select{ |d| d[@fact_subject]>group[:min] && d[@fact_subject]<group[:max] } } 
-	# 		results.merge!( { count: results[:objects].size } )
-	# 		group.merge!(results)
-	# 	end	
-	# end	
-
-	#aggregations
+ 	
+ 	#aggregations
 
 	def add_actions
 		if attribute_type == "float" || attribute_type == "integer"
@@ -22,7 +15,7 @@ class Attribute < ActiveRecord::Base
 			self.dim_actions  = [ ">", "<" , "=" ]
 		elsif attribute_type == "string"
 			self.fact_actions = ["count"]
-			self.dim_actions = ["=" ,"IN","group" ]
+			self.dim_actions = ["=" ,"IN"]
 		end
 	end
 	
@@ -36,16 +29,21 @@ class Attribute < ActiveRecord::Base
 	end	
 
 #pre query actions
-	def discrete ( group_num = 5  )
-		max = table_obj.maximum(attribute_name)
-		min = table_obj.minimum(attribute_name)
+	def discrete ( group_num = 5 ,positive =true )
+		if positive	
+			max = table_obj.where("#{name} > 0").maximum(name)
+			min = table_obj.where("#{name} > 0").minimum(name)
+		else
+			max = table_obj.maximum(name)
+			min = table_obj.minimum(name)
+		end	
 		diff = (max - min)/group_num
 		
 		groups = []
-		groups << { min: min , max: min + diff }
+		groups << { min: min.round(2) , max: (min + diff).round(2) }
 
 		(group_num -1).times.with_index do |idx|
-			groups << { min: groups[idx][:max] , max: groups[idx][:max] + diff }
+			groups << { min: groups[idx][:max].round(2) , max: (groups[idx][:max] + diff).round(2) }
 		end	
 		groups
 	end

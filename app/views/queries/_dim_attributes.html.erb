@@ -21,7 +21,7 @@
           <%if attribute.attribute_type == "integer" || attribute.attribute_type == "float" %>
             <p class="select">
               <%= check_box_tag("descrete[#{dim.name}]", attribute.name.to_sym)%>
-              <small>descrete</small> 
+              <small>discrete</small> 
             </p>
           <%end%>  
         </td>
